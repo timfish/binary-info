@@ -8,11 +8,13 @@ const values = [
   ['binary-info.darwin-x64.node', 'darwin', 'x64'],
   ['binary-info.linux-arm-gnueabihf.node', 'linux', 'arm'],
   ['binary-info.linux-x64-gnu.node', 'linux', 'x64'],
-  ['binary-info.linux-arm64-gnu.node', 'darwin', 'x64'],
+  ['binary-info.linux-arm64-gnu.node', 'linux', 'x64'],
 ];
 
 for (const [file, platform, arch] of values) {
+  console.log('Testing ' + file);
   const info = binary.getInfo('./' + file);
+  console.log(info);
   assert.equal(info.platform, platform);
   assert.equal(info.arch, arch);
 }
