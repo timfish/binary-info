@@ -62,7 +62,9 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: artifacts
-          path: binary-info.*.node
+          path: |
+            binary-info.*.node
+            index.*
 
   build-windows-i686:
     name: i686-pc-windows-msvc
