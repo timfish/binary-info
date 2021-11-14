@@ -1,0 +1,55 @@
+{
+  "name": "binary-info",
+  "version": "0.0.1",
+  "description": "Native node module to get the platform and architecture of a binary",
+  "main": "index.js",
+  "repository": "git@github.com:timfish/binary-info.git",
+  "license": "MIT",
+  "keywords": [
+    "binary",
+    "elf",
+    "ps",
+    "macho"
+  ],
+  "types": "index.d.ts",
+  "files": [
+    "index.d.ts",
+    "index.js",
+    "*.node"
+  ],
+  "napi": {
+    "name": "binary-info",
+    "triples": {
+      "defaults": true,
+      "additional": [
+        "i686-pc-windows-msvc",
+        "aarch64-unknown-linux-gnu",
+        "armv7-unknown-linux-gnueabihf",
+        "aarch64-apple-darwin"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">= 10.16.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "scripts": {
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "test": "node ./test.js"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "2.0.0-alpha.4",
+    "prettier": "^2.4.1"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "trailingComma": "all",
+    "singleQuote": true,
+    "arrowParens": "always",
+    "parser": "typescript"
+  }
+}

@@ -1,0 +1,24 @@
+cargo-features = ["strip"]
+
+[package]
+authors = ["Tim Fish <tim@timfish.uk>"]
+edition = "2018"
+name = "binary-info"
+version = "0.0.1"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+goblin = "0.4"
+napi = {version = "2.0.0-alpha.2", features = ["async", "serde-json", "napi5"]}
+napi-derive = "2.0.0-alpha.3"
+serde = {version = "1.0", features = ["derive"]}
+
+[build-dependencies]
+napi-build = "1"
+
+[profile.release]
+codegen-units = 1
+lto = true
+strip = 'symbols'
