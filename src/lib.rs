@@ -1,6 +1,7 @@
 use goblin::{
     elf64::header::{EM_AARCH64, EM_ARM, EM_X86_64},
     mach::{cputype::get_arch_name_from_types, Mach},
+    pe::header::{COFF_MACHINE_ARM64, COFF_MACHINE_X86, COFF_MACHINE_X86_64},
     Object as Obj,
 };
 use napi::bindgen_prelude::*;
@@ -40,7 +41,18 @@ pub fn get_info(path: String) -> Result<BinaryInfo> {
             })
         }
         Obj::PE(pe) => {
-            let arch = if pe.is_64 { "x64" } else { "ia32" };
+            let arch = match pe.header.coff_header.machine {
+                COFF_MACHINE_ARM64 => "arm64",
+                COFF_MACHINE_X86 => "ia32",
+                COFF_MACHINE_X86_64 => "x64",
+                _ => {
+                    return Err(Error::new(
+                        Status::GenericFailure,
+                        "Unknown architecture".to_string(),
+                    ))
+                }
+            };
+
             Ok(BinaryInfo {
                 platform: "win32".to_string(),
                 arch: arch.to_string(),

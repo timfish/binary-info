@@ -4,6 +4,7 @@ const assert = require('assert');
 const values = [
   ['binary-info.win32-x64-msvc.node', 'win32', 'x64'],
   ['binary-info.win32-ia32-msvc.node', 'win32', 'ia32'],
+  ['binary-info.win32-arm64-msvc.node', 'win32', 'arm64'],
   ['binary-info.darwin-x64.node', 'darwin', 'x64'],
   ['binary-info.darwin-arm64.node', 'darwin', 'arm64'],
   ['binary-info.linux-x64-gnu.node', 'linux', 'x64'],
