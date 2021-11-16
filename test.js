@@ -12,11 +12,14 @@ const values = [
   ['binary-info.linux-arm64-gnu.node', 'linux', 'arm64'],
 ];
 
+console.log(`Current: { platform: ${process.platform}, arch: ${process.arch} }`);
+
 for (const [file, platform, arch] of values) {
-  console.log('Testing ' + file);
-  console.log('Expecting', platform, arch);
+  console.log('Testing binary: ' + file);
+  console.log(`Expecting: { platform: ${platform}, arch: ${arch} }`);
   const info = binary.getInfo('./' + file);
   console.log('Result', info);
+
   assert.equal(info.platform, platform);
   assert.equal(info.arch, arch);
 }
