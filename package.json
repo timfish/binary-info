@@ -7,9 +7,12 @@
   "license": "MIT",
   "keywords": [
     "binary",
+    "parser",
+    "platform",
+    "arch",
     "elf",
-    "ps",
-    "macho"
+    "pe",
+    "mach-o"
   ],
   "types": "index.d.ts",
   "files": [
