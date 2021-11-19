@@ -1,6 +1,6 @@
 {
   "name": "binary-info",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Native node module to get the platform and architecture of a binary",
   "main": "index.js",
   "repository": "git@github.com:timfish/binary-info.git",
@@ -49,8 +49,6 @@
   "prettier": {
     "printWidth": 100,
     "trailingComma": "all",
-    "singleQuote": true,
-    "arrowParens": "always",
-    "parser": "typescript"
+    "singleQuote": true
   }
 }
