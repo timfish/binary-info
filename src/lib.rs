@@ -87,3 +87,31 @@ pub fn get_info(path: String) -> Result<BinaryInfo> {
         )),
     }
 }
+
+#[napi]
+pub fn is_compatible(path: String, desired: BinaryInfo) -> Result<bool> {
+    match get_info(path) {
+        Ok(info) => {
+            if desired.platform == info.platform && desired.arch == info.arch {
+                Ok(true)
+            } else {
+                Ok(false)
+            }
+        }
+        Err(_) => Ok(false),
+    }
+}
+
+#[napi]
+pub fn is_incompatible(path: String, desired: BinaryInfo) -> Result<bool> {
+    match get_info(path) {
+        Ok(info) => {
+            if desired.platform != info.platform || desired.arch != info.arch {
+                Ok(true)
+            } else {
+                Ok(false)
+            }
+        }
+        Err(_) => Ok(false),
+    }
+}

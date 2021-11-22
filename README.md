@@ -5,11 +5,27 @@ Native node module to get the platform and architecture of a binary
 ```ts
 const binary = require('binary-info');
 
+// getInfo will throw an error if the file does not appear to be
+// a binary or is an unknown architecture
 binary.getInfo('./path/to/some.node');
 // {
 //    platform: "darwin",
 //    arch: "arm64"
 // }
+
+// isCompatible will return true if the file is a binary
+// and matches the supplied platform and architecture
+binary.isCompatible('./path/to/some.node', { platform: 'darwin', arch: 'x64' });
+// false
+binary.isCompatible('./non-binary.js', { platform: 'darwin', arch: 'x64' });
+// false
+
+// isIncompatible will return true if the file is a binary
+// but doesn't match the supplied platform and architecture
+binary.isIncompatible('./path/to/some.node', { platform: 'darwin', arch: 'x64' });
+// true
+binary.isIncompatible('./non-binary.js', { platform: 'darwin', arch: 'x64' });
+// false
 ```
 
 | Platform | Arch    | Binary Included | Detected | CI Tested |
