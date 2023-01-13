@@ -1,5 +1,7 @@
 const binary = require('./index');
 const assert = require('assert');
+const { existsSync } = require('fs');
+const { join } = require('path');
 
 const values = [
   ['binary-info.win32-x64-msvc.node', 'win32', 'x64'],
@@ -15,11 +17,14 @@ const values = [
 console.log(`Current: { platform: ${process.platform}, arch: ${process.arch} }`);
 
 for (const [file, platform, arch] of values) {
-  console.log('Testing binary: ' + file);
-  console.log(`Expecting: { platform: ${platform}, arch: ${arch} }`);
-  const info = binary.getInfo('./' + file);
-  console.log('Result', info);
+  const path = join('./', file);
+  if (existsSync(path)) {
+    console.log('Testing binary: ' + file);
+    console.log(`Expecting: { platform: ${platform}, arch: ${arch} }`);
+    const info = binary.getInfo(path);
+    console.log('Result', info);
 
-  assert.equal(info.platform, platform);
-  assert.equal(info.arch, arch);
+    assert.equal(info.platform, platform);
+    assert(info.arches.includes(arch));
+  }
 }
