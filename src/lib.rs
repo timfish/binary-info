@@ -1,6 +1,6 @@
 use goblin::{
     elf64::header::{EM_AARCH64, EM_ARM, EM_X86_64},
-    mach::{cputype::get_arch_name_from_types, Mach},
+    mach::{cputype::get_arch_name_from_types, Mach, MultiArch},
     pe::header::{COFF_MACHINE_ARM64, COFF_MACHINE_X86, COFF_MACHINE_X86_64},
     Object as Obj,
 };
@@ -13,7 +13,24 @@ use std::{fs, path::Path};
 #[derive(Serialize, Deserialize, Debug)]
 pub struct BinaryInfo {
     pub platform: String,
-    pub arch: String,
+    pub arches: Vec<String>,
+}
+
+fn get_fat_arches(fat: MultiArch) -> Result<Vec<String>> {
+    fat.arches()
+        .map_err(|e| Error::new(Status::GenericFailure, e.to_string()))?
+        .iter()
+        .map(
+            |arch| match get_arch_name_from_types(arch.cputype, arch.cpusubtype) {
+                Some("x86_64") => Ok("x64".to_string()),
+                Some("arm64") => Ok("arm64".to_string()),
+                _ => Err(Error::new(
+                    Status::GenericFailure,
+                    "Unknown architecture".to_string(),
+                )),
+            },
+        )
+        .collect::<Result<Vec<String>>>()
 }
 
 #[napi]
@@ -37,7 +54,7 @@ pub fn get_info(path: String) -> Result<BinaryInfo> {
 
             Ok(BinaryInfo {
                 platform: "linux".to_string(),
-                arch: arch.to_string(),
+                arches: vec![arch.to_string()],
             })
         }
         Obj::PE(pe) => {
@@ -55,11 +72,23 @@ pub fn get_info(path: String) -> Result<BinaryInfo> {
 
             Ok(BinaryInfo {
                 platform: "win32".to_string(),
-                arch: arch.to_string(),
+                arches: vec![arch.to_string()],
             })
         }
         Obj::Mach(mach) => match mach {
-            Mach::Fat(_) => todo!(),
+            Mach::Fat(fat) => {
+                if let Ok(arches) = get_fat_arches(fat) {
+                    Ok(BinaryInfo {
+                        platform: "darwin".to_string(),
+                        arches,
+                    })
+                } else {
+                    Err(Error::new(
+                        Status::GenericFailure,
+                        "Unknown Fat architecture".to_string(),
+                    ))
+                }
+            }
             Mach::Binary(mach_o) => {
                 let arch = match get_arch_name_from_types(
                     mach_o.header.cputype(),
@@ -77,7 +106,7 @@ pub fn get_info(path: String) -> Result<BinaryInfo> {
 
                 Ok(BinaryInfo {
                     platform: "darwin".to_string(),
-                    arch: arch.to_string(),
+                    arches: vec![arch.to_string()],
                 })
             }
         },
@@ -89,10 +118,10 @@ pub fn get_info(path: String) -> Result<BinaryInfo> {
 }
 
 #[napi]
-pub fn is_compatible(path: String, desired: BinaryInfo) -> Result<bool> {
+pub fn is_compatible(path: String, platform: String, arch: String) -> Result<bool> {
     match get_info(path) {
         Ok(info) => {
-            if desired.platform == info.platform && desired.arch == info.arch {
+            if platform == info.platform && info.arches.contains(&arch) {
                 Ok(true)
             } else {
                 Ok(false)
@@ -103,10 +132,10 @@ pub fn is_compatible(path: String, desired: BinaryInfo) -> Result<bool> {
 }
 
 #[napi]
-pub fn is_incompatible(path: String, desired: BinaryInfo) -> Result<bool> {
+pub fn is_incompatible(path: String, platform: String, arch: String) -> Result<bool> {
     match get_info(path) {
         Ok(info) => {
-            if desired.platform != info.platform || desired.arch != info.arch {
+            if platform != info.platform || !info.arches.contains(&arch) {
                 Ok(true)
             } else {
                 Ok(false)
