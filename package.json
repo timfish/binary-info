@@ -1,6 +1,6 @@
 {
   "name": "binary-info",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "Native node module to get the platform and architecture of a binary",
   "main": "index.js",
   "repository": "git@github.com:timfish/binary-info.git",
@@ -53,5 +53,9 @@
     "printWidth": 100,
     "trailingComma": "all",
     "singleQuote": true
+  },
+  "volta": {
+    "node": "16.19.0",
+    "yarn": "1.22.19"
   }
 }
