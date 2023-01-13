@@ -7,24 +7,25 @@ const binary = require('binary-info');
 
 // getInfo will throw an error if the file does not appear to be
 // a binary or is an unknown architecture
-binary.getInfo('./path/to/some.node');
+binary.getInfo('./path/to/some-binary');
 // {
 //    platform: "darwin",
-//    arch: "arm64"
+//    arches: ["x64", "arm64"] 
 // }
+// arches is an array to support getting multiple architectures from Mac Fat binaries
 
 // isCompatible will return true if the file is a binary
-// and matches the supplied platform and architecture
-binary.isCompatible('./path/to/some.node', { platform: 'darwin', arch: 'x64' });
+// and the binary support the supplied platform and architecture
+binary.isCompatible('./path/to/some.node', 'darwin', 'x64');
 // false
-binary.isCompatible('./non-binary.js', { platform: 'darwin', arch: 'x64' });
+binary.isCompatible('./non-binary.js', 'darwin', 'x64');
 // false
 
 // isIncompatible will return true if the file is a binary
-// but doesn't match the supplied platform and architecture
-binary.isIncompatible('./path/to/some.node', { platform: 'darwin', arch: 'x64' });
+// but the binary does not support the supplied platform and architecture
+binary.isIncompatible('./path/to/some.node', 'darwin', 'x64');
 // true
-binary.isIncompatible('./non-binary.js', { platform: 'darwin', arch: 'x64' });
+binary.isIncompatible('./non-binary.js', 'darwin', 'x64');
 // false
 ```
 
